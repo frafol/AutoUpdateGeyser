@@ -9,4 +9,4 @@ Original Spigot Link: https://www.spigotmc.org/resources/autoupdategeyser.109632
 - Configuration that allows you to specify what to update.
 
 # Installation
-To install AutoUpdateGeyser, users need to download the compile the plugin and copy the .jar file to the plugins directory of their Minecraft server/proxy.
+To install AutoUpdateGeyser, users need to compile the plugin and copy the .jar file to the plugins directory of their Minecraft server/proxy.
