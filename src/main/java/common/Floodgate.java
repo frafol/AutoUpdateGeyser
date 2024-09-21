@@ -14,12 +14,9 @@ public class Floodgate {
 
     public void simpleUpdateFloodgate(String platform) {
         String latestVersionUrl;
-        if(platform.equals("bungeecord")){
-            platform = "bungee";
-        }
+        platform = displayPlatform(platform);
         latestVersionUrl = "https://download.geysermc.org/v2/projects/floodgate/versions/latest/builds/latest/downloads/" + platform;
-        String outputFilePath = "plugins/Floodgate-" + platform + ".jar";
-
+        String outputFilePath = "plugins/floodgate-" + platform + ".jar";
         try (InputStream in = new URL(latestVersionUrl).openStream();
              FileOutputStream out = new FileOutputStream(outputFilePath)) {
             byte[] buffer = new byte[1024];
@@ -27,19 +24,15 @@ public class Floodgate {
             while ((bytesRead = in.read(buffer)) != -1) {
                 out.write(buffer, 0, bytesRead);
             }
-        } catch (IOException ignored) {
-        }
+        } catch (IOException ignored) {}
     }
 
     public boolean updateFloodgate(String platform){
         String apiUrl = "https://download.geysermc.org/v2/projects/floodgate/versions/latest";
-
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             JsonNode jsonNode = objectMapper.readTree(new URL(apiUrl));
-
             JsonNode buildsNode = jsonNode.get("builds");
-
             if (getDownloadedBuild("Floodgate") == -1) {
                 simpleUpdateFloodgate(platform);
                 updateBuildNumber("Floodgate", getMaxBuildNumber(buildsNode));
@@ -49,12 +42,27 @@ public class Floodgate {
                 updateBuildNumber("Floodgate", getMaxBuildNumber(buildsNode));
                 return true;
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception ignored) {
+            System.out.println("Unable to update Floodgate 2.");
         }
         return false;
     }
 
-
+    private String displayPlatform(String platform) {
+        switch (platform) {
+            case "BungeeCord" -> {
+                return "bungee";
+            }
+            case "Velocity" -> {
+                return "velocity";
+            }
+            case "Spigot" -> {
+                return "spigot";
+            }
+            default -> {
+                return null;
+            }
+        }
+    }
 }
 

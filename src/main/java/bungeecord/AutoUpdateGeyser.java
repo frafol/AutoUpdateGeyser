@@ -2,9 +2,6 @@ package bungeecord;
 
 import common.Floodgate;
 import common.Geyser;
-import net.md_5.bungee.api.CommandSender;
-import net.md_5.bungee.api.ProxyServer;
-import net.md_5.bungee.api.plugin.Command;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;
@@ -13,7 +10,6 @@ import net.md_5.bungee.api.ChatColor;
 
 import java.io.*;
 import java.nio.file.Files;
-import java.util.concurrent.TimeUnit;
 
 import static common.BuildYml.createYamlFile;
 import static common.BuildYml.updateBuildNumber;
@@ -34,59 +30,36 @@ public final class AutoUpdateGeyser extends Plugin {
         m_geyser = new Geyser();
         m_floodgate = new Floodgate();
         saveDefaultConfig();
-        loadConfiguration();
         createYamlFile(getDataFolder().getAbsolutePath());
-        updateChecker();
-        ProxyServer.getInstance().getPluginManager().registerCommand(this, new UpdateCommand());
+        loadConfiguration();
+        getLogger().info(org.bukkit.ChatColor.GREEN + "AutoGeyserUpdate started correctly.");
     }
 
-    public void updateChecker() {
-        ifGeyser = getProxy().getPluginManager().getPlugin("Geyser-BungeeCord");
-        ifFloodgate = getProxy().getPluginManager().getPlugin("floodgate");
-        int interval = config.getInt("updates.interval");
-        long updateInterval = interval * 60L;
-        long bootDelay = config.getInt("updates.bootTime");
-        configGeyser = config.getBoolean("updates.geyser");
-        configFloodgate = config.getBoolean("updates.floodgate");
-
-        getProxy().getScheduler().schedule(this, () -> {
-            getProxy().getScheduler().runAsync(this, () -> {
-                updatePlugin("Geyser", ifGeyser, configGeyser);
-                updatePlugin("Floodgate", ifFloodgate, configFloodgate);
-            });
-        }, bootDelay, updateInterval, TimeUnit.SECONDS);
+    @Override
+    public void onDisable() {
+        updatePlugin("Geyser", ifGeyser, configGeyser);
+        updatePlugin("Floodgate", ifFloodgate, configFloodgate);
     }
 
     private void updatePlugin(String pluginName, Object pluginInstance, boolean configCheck) {
         if (pluginInstance == null && configCheck) {
             updateBuildNumber(pluginName, -1);
             if (updatePluginInstallation(pluginName)) {
-                getLogger().info(ChatColor.GREEN + pluginName + " has been installed for the first time." + ChatColor.YELLOW + " Please restart the server again to let it take effect.");
-                scheduleRestartIfAutoRestart();
+                getLogger().info(ChatColor.GREEN + pluginName + " has been installed for the first time.");
             }
         } else if (configCheck) {
             if (updatePluginInstallation(pluginName)) {
-                getLogger().info(ChatColor.GREEN + "New update of " + pluginName + " was downloaded." + ChatColor.YELLOW + " Please restart to let it take effect.");
-                scheduleRestartIfAutoRestart();
+                getLogger().info(ChatColor.GREEN + "A new update of " + pluginName + " was downloaded.");
             }
         }
     }
 
     private boolean updatePluginInstallation(String pluginName) {
         return switch (pluginName) {
-            case "Geyser" -> m_geyser.updateGeyser("bungeecord");
-            case "Floodgate" -> m_floodgate.updateFloodgate("bungeecord");
+            case "Geyser" -> m_geyser.updateGeyser("BungeeCord");
+            case "Floodgate" -> m_floodgate.updateFloodgate("BungeeCord");
             default -> false;
         };
-    }
-
-    private void scheduleRestartIfAutoRestart() {
-        if (config.getBoolean("updates.autoRestart")) {
-            getProxy().broadcast(ChatColor.translateAlternateColorCodes('&', config.getString("updates.restartMessage")));
-            ProxyServer.getInstance().getScheduler().schedule(this, () -> {
-                ProxyServer.getInstance().getPluginManager().dispatchCommand(ProxyServer.getInstance().getConsole(), "end");
-            }, config.getInt("updates.restartDelay"), TimeUnit.SECONDS);
-        }
     }
 
     private void saveDefaultConfig() {
@@ -94,12 +67,12 @@ public final class AutoUpdateGeyser extends Plugin {
         if (!file.exists()) {
             file.getParentFile().mkdirs();
             try (InputStream in = getClass().getResourceAsStream("/config.yml")) {
+                assert in != null;
                 Files.copy(in, file.toPath());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            } catch (IOException ignored) {}
         }
     }
+
     private void loadConfiguration() {
         File file = new File(getDataFolder(), "config.yml");
         try {
@@ -107,19 +80,9 @@ public final class AutoUpdateGeyser extends Plugin {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    public class UpdateCommand extends Command {
-
-        public UpdateCommand() {
-            super("updategeyser", "autoupdategeyser.admin");
-        }
-
-        @Override
-        public void execute(CommandSender sender, String[] args) {
-            updatePlugin("Geyser", ifGeyser, configGeyser);
-            updatePlugin("Floodgate", ifFloodgate, configFloodgate);
-            sender.sendMessage(ChatColor.AQUA + "Update checker for Geyser and Floodgate successful!");
-        }
+        ifGeyser = getProxy().getPluginManager().getPlugin("Geyser-BungeeCord");
+        ifFloodgate = getProxy().getPluginManager().getPlugin("floodgate");
+        configGeyser = config.getBoolean("updates.geyser");
+        configFloodgate = config.getBoolean("updates.floodgate");
     }
 }

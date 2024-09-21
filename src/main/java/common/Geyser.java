@@ -14,9 +14,10 @@ public class Geyser {
 
     public void simpleUpdateGeyser(String platform) {
         String latestVersionUrl;
+        String originalPlatform = platform;
+        platform = displayPlatform(platform);
         latestVersionUrl = "https://download.geysermc.org/v2/projects/geyser/versions/latest/builds/latest/downloads/" + platform;
-        String outputFilePath = "plugins/Geyser-" + platform + ".jar";
-
+        String outputFilePath = "plugins/Geyser-" + originalPlatform + ".jar";
         try (InputStream in = new URL(latestVersionUrl).openStream();
              FileOutputStream out = new FileOutputStream(outputFilePath)) {
             byte[] buffer = new byte[1024];
@@ -24,19 +25,15 @@ public class Geyser {
             while ((bytesRead = in.read(buffer)) != -1) {
                 out.write(buffer, 0, bytesRead);
             }
-        } catch (IOException ignored) {
-        }
+        } catch (IOException ignored) {}
     }
 
     public boolean updateGeyser(String platform) {
         String apiUrl = "https://download.geysermc.org/v2/projects/geyser/versions/latest";
-
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             JsonNode jsonNode = objectMapper.readTree(new URL(apiUrl));
-
             JsonNode buildsNode = jsonNode.get("builds");
-
             if (getDownloadedBuild("Geyser") == -1) {
                 simpleUpdateGeyser(platform);
                 updateBuildNumber("Geyser", getMaxBuildNumber(buildsNode));
@@ -50,5 +47,22 @@ public class Geyser {
             e.printStackTrace();
         }
         return false;
+    }
+
+    private String displayPlatform(String platform) {
+        switch (platform) {
+            case "BungeeCord" -> {
+                return "bungee";
+            }
+            case "Velocity" -> {
+                return "velocity";
+            }
+            case "Spigot" -> {
+                return "spigot";
+            }
+            default -> {
+                return null;
+            }
+        }
     }
 }
