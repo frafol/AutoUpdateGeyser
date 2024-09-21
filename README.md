@@ -1,7 +1,7 @@
-# AutoUpdateGeyser
+# AutoUpdateGeyser (Fork)
 AutoUpdateGeyser is a plugin for Spigot/Velocity/Bungeecord that automates the updating of Geyser and Floodgate on server shutdown.
 
-Spigot Link: https://www.spigotmc.org/resources/autoupdategeyser.109632/
+Original Spigot Link: https://www.spigotmc.org/resources/autoupdategeyser.109632/
 
 # Features
 - Compatible with Minecraft versions 1.8 and higher for both bungeecord, spigot and velocity.
@@ -9,4 +9,4 @@ Spigot Link: https://www.spigotmc.org/resources/autoupdategeyser.109632/
 - Configuration that allows you to specify what to update.
 
 # Installation
-To install AutoUpdateGeyser, users need to download the latest release from the releases page and copy the downloaded .jar file to the plugins directory of their Minecraft server/proxy.
+To install AutoUpdateGeyser, users need to download the compile the plugin and copy the .jar file to the plugins directory of their Minecraft server/proxy.
