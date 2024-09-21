@@ -54,12 +54,12 @@ public final class AutoUpdateGeyser {
         m_floodgate = new Floodgate();
         createYamlFile(dataDirectory.toAbsolutePath().toString());
         loadConfiguration();
-        proxy.getConsoleCommandSource().sendMessage(Component.text("AutoGeyserUpdate started correctly.", NamedTextColor.GREEN));
+        proxy.getConsoleCommandSource().sendMessage(Component.text("AutoUpdateGeyser started correctly.", NamedTextColor.GREEN));
     }
 
     @Subscribe
     public void onProxyShutdown(ProxyShutdownEvent event) {
-        proxy.getConsoleCommandSource().sendMessage(Component.text("Starting AutoGeyserUpdate process...", NamedTextColor.GREEN));
+        proxy.getConsoleCommandSource().sendMessage(Component.text("Starting AutoUpdateGeyser process...", NamedTextColor.GREEN));
         updatePlugin("Geyser", ifGeyser, configGeyser);
         updatePlugin("Floodgate", ifFloodgate, configFloodgate);
     }

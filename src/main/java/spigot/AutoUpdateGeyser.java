@@ -30,7 +30,7 @@ public final class AutoUpdateGeyser extends JavaPlugin {
         saveDefaultConfig();
         createYamlFile(getDataFolder().getAbsolutePath());
         loadConfiguration();
-        getLogger().info(ChatColor.GREEN + "AutoGeyserUpdate started correctly.");
+        getLogger().info(ChatColor.GREEN + "AutoUpdateGeyser started correctly.");
     }
 
     @Override

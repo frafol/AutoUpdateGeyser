@@ -32,11 +32,12 @@ public final class AutoUpdateGeyser extends Plugin {
         saveDefaultConfig();
         createYamlFile(getDataFolder().getAbsolutePath());
         loadConfiguration();
-        getLogger().info(org.bukkit.ChatColor.GREEN + "AutoGeyserUpdate started correctly.");
+        getLogger().info(org.bukkit.ChatColor.GREEN + "AutoUpdateGeyser started correctly.");
     }
 
     @Override
     public void onDisable() {
+        getLogger().info(ChatColor.GREEN + "Starting AutoUpdateGeyser process...");
         updatePlugin("Geyser", ifGeyser, configGeyser);
         updatePlugin("Floodgate", ifFloodgate, configFloodgate);
     }
